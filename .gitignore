@@ -1,0 +1,19 @@
+# build output
+/c4g
+/dist/
+*.exe
+*.test
+*.out
+coverage.*
+
+# reports generated locally
+*.sarif
+!testdata/golden/*.sarif
+report*.html
+summary.md
+
+# media tooling (generated in a temp dir, never committed)
+node_modules/
+tools/media/out/
+
+.DS_Store

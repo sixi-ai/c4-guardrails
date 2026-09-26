@@ -1,0 +1,24 @@
+c4-guardrails 0.1.0
+
+examples/rag-chatbot-bad.mmd (RAG support chatbot (bad twin)): 6 elements, 5 relationships, 8 findings
+
+  SEVERITY  RULE   WHERE                              FINDING
+  HIGH      CG001  Customer → Chat widget             "Chats with" crosses a trust boundary: HTTP declared without TLS.
+                                                      line 15 · GDPR:Art32(1)(a), NIS2:2022/2555:Art21(2)(h)
+  HIGH      CG003  Vector store                       Holds personal data; encryption at rest is not declared (missing fact).
+                                                      line 9 · GDPR:Art32(1)(a), NIS2:2022/2555:Art21(2)(h)
+  HIGH      CG004  Chat API → Hosted LLM API          "Prompt with retrieved context" sends personal data to an AI endpoint; no element tagged oversight.
+                                                      line 19 · AIACT:2024/1689:Art14, GDPR:Art25
+  MEDIUM    CG005  Hosted LLM API                     Tagged critical; no exit strategy or alternative declared.
+                                                      line 13 · DORA:2022/2554:Art28(8), DORA:2022/2554:Art28, NIS2:2022/2555:Art21(2)(d)
+  MEDIUM    CG007  whole diagram                      3 element(s) handle personal data; no element tagged logging.
+                                                      line 4 · NIS2:2024/2690:Annex-3.2, DORA-RTS:2024/1774:Art12
+  MEDIUM    CG008  Chat API → Vector store            "Similarity search" authenticates with password; no element tagged secrets.
+                                                      line 17 · NIS2:2022/2555:Art21(2)(i), GDPR:Art32
+  MEDIUM    CG008  Chat API → Hosted LLM API          "Prompt with retrieved context" authenticates with api_key; no element tagged secrets.
+                                                      line 19 · NIS2:2022/2555:Art21(2)(i), GDPR:Art32
+  MEDIUM    CG010  Chat API → Hosted LLM API          "Prompt with retrieved context" sends personal data to Hosted LLM API; region not declared (missing fact).
+                                                      line 19 · GDPR:Art44, GDPR:Art46
+
+Summary: 0 critical · 3 high · 5 medium · 0 low · 0 info -> fail: 3 finding(s) at or above "high"
+Assesses declared design facts only; not a compliance certification.

@@ -1,0 +1,19 @@
+C4Container
+title RAG support chatbot (bad twin)
+
+Person(customer, "Customer", "Asks questions about their own account")
+
+System_Boundary(chat, "Support chatbot") {
+    Container(web, "Chat widget", "React SPA", "Runs in the customer's browser")
+    Container(api, "Chat API", "Go", "Retrieves context and builds prompts", $tags="pii")
+    ContainerDb(vec, "Vector store", "PostgreSQL + pgvector", "Embedded support tickets, including customer details", $tags="pii")
+    ContainerDb(crm, "Customer DB", "PostgreSQL", "Customer profiles", $tags="pii;at_rest:aes256")
+}
+
+System_Ext(llm, "Hosted LLM API", "Third-party foundation model", $tags="ai;critical")
+
+Rel(customer, web, "Chats with", "HTTP")
+Rel(web, api, "Sends messages", "HTTPS/JSON", $tags="auth:oidc")
+Rel(api, vec, "Similarity search", "JDBC/TLS", $tags="auth:password")
+Rel(api, crm, "Reads profile", "JDBC/TLS", $tags="auth:managed_identity")
+Rel(api, llm, "Prompt with retrieved context", "HTTPS/JSON", $tags="auth:api_key")

@@ -1,0 +1,21 @@
+C4Container
+title Payments platform (bad twin)
+
+Person(customer, "Retail customer", "Initiates transfers")
+Person(clerk, "Back-office clerk", "Fixes rejected payments")
+
+Enterprise_Boundary(bank, "Bank") {
+    System_Boundary(pay, "Payments") {
+        Container(portal, "Online banking", "Java, Spring", "Customer-facing web app")
+        Container(engine, "Payment engine", "Java", "Validates and routes payments", $tags="pii")
+        ContainerDb(ledger, "Payments ledger", "Oracle", "Payment orders with payer and payee data", $tags="pii")
+    }
+}
+
+System_Ext(switch, "Clearing ICT provider", "SaaS payment switch", $tags="critical")
+
+Rel(customer, portal, "Initiates payment", "HTTPS", $tags="auth:oidc")
+Rel(portal, engine, "Submits payment", "HTTPS", $tags="auth:mtls")
+Rel(clerk, ledger, "Edits rejected orders", "SQL client")
+Rel(engine, ledger, "Posts entries", "JDBC/TLS", $tags="auth:password")
+Rel(engine, switch, "Sends payment orders", "ISO 20022 messages")

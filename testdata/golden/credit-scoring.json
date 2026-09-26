@@ -1,0 +1,172 @@
+{
+  "tool": "c4-guardrails",
+  "version": "0.1.0",
+  "inputs": [
+    {
+      "source": "examples/credit-scoring.c4.json",
+      "title": "Credit scoring service (JSON input example)",
+      "elements": 7,
+      "relationships": 6
+    }
+  ],
+  "fail_on": "high",
+  "summary": {
+    "critical": 0,
+    "high": 2,
+    "info": 0,
+    "low": 0,
+    "medium": 2
+  },
+  "findings": [
+    {
+      "rule_id": "CG002",
+      "severity": "high",
+      "title": "External system called without declared authentication",
+      "message": "\"Fetches credit history\": authentication declared as \"none\".",
+      "subject": "Credit scoring model → Credit bureau",
+      "nodes": [
+        "scoring",
+        "bureau"
+      ],
+      "edges": [
+        3
+      ],
+      "clauses": [
+        "NIS2:2022/2555:Art21(2)(j)",
+        "GDPR:Art32"
+      ],
+      "remediation": "Declare the mechanism, e.g. $tags=\"auth:oauth2\", \"auth:mtls\" or \"auth:managed_identity\".",
+      "source": "examples/credit-scoring.c4.json",
+      "line": 19
+    },
+    {
+      "rule_id": "CG009",
+      "severity": "high",
+      "title": "High-risk AI system without a record-keeping log store",
+      "message": "Tagged ai + high-risk; no relationship to an element tagged records.",
+      "subject": "Credit scoring model",
+      "nodes": [
+        "scoring"
+      ],
+      "clauses": [
+        "AIACT:2024/1689:Art12",
+        "AIACT:2024/1689:Art26(6)"
+      ],
+      "remediation": "Add an append-only log store tagged records and draw the relationship from the AI system to it.",
+      "source": "examples/credit-scoring.c4.json",
+      "line": 9
+    },
+    {
+      "rule_id": "CG005",
+      "severity": "medium",
+      "title": "Critical third-party ICT service without a declared exit or alternative",
+      "message": "Tagged critical; no exit strategy or alternative declared.",
+      "subject": "Credit bureau",
+      "nodes": [
+        "bureau"
+      ],
+      "clauses": [
+        "DORA:2022/2554:Art28(8)",
+        "DORA:2022/2554:Art28",
+        "NIS2:2022/2555:Art21(2)(d)"
+      ],
+      "remediation": "Declare the exit path, e.g. $tags=\"critical;exit:secondary-provider\", and draw the alternative if it exists.",
+      "source": "examples/credit-scoring.c4.json",
+      "line": 13
+    },
+    {
+      "rule_id": "CG007",
+      "severity": "medium",
+      "title": "No logging or monitoring component in a system handling personal data",
+      "message": "2 element(s) handle personal data; no element tagged logging.",
+      "subject": "whole diagram",
+      "nodes": [
+        "scoring",
+        "apps"
+      ],
+      "clauses": [
+        "NIS2:2024/2690:Annex-3.2",
+        "DORA-RTS:2024/1774:Art12"
+      ],
+      "remediation": "Add the log sink to the diagram and tag it, e.g. Container(logs, \"Central logging\", \"OpenTelemetry\", $tags=\"logging\").",
+      "source": "examples/credit-scoring.c4.json",
+      "line": 7
+    }
+  ],
+  "clauses": {
+    "AIACT:2024/1689:Art12": {
+      "id": "AIACT:2024/1689:Art12",
+      "instrument": "Regulation (EU) 2024/1689 (AI Act)",
+      "ref": "Art. 12",
+      "title": "Record-keeping",
+      "summary": "High-risk AI systems have to be able to record events automatically (logs) across their lifetime so that their operation can be traced and monitored.",
+      "source_url": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj"
+    },
+    "AIACT:2024/1689:Art26(6)": {
+      "id": "AIACT:2024/1689:Art26(6)",
+      "instrument": "Regulation (EU) 2024/1689 (AI Act)",
+      "ref": "Art. 26(6)",
+      "title": "Obligations of deployers of high-risk AI systems (retention of logs)",
+      "summary": "Deployers keep the logs a high-risk AI system generates under their control for an appropriate period, at least six months unless other law says otherwise.",
+      "source_url": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj"
+    },
+    "DORA-RTS:2024/1774:Art12": {
+      "id": "DORA-RTS:2024/1774:Art12",
+      "instrument": "Commission Delegated Regulation (EU) 2024/1774 (DORA RTS on ICT risk management)",
+      "ref": "Art. 12",
+      "title": "Logging",
+      "summary": "Financial entities define and run logging procedures and tools: which events are logged, how long logs are kept and how log data is protected.",
+      "source_url": "https://eur-lex.europa.eu/eli/reg_del/2024/1774/oj"
+    },
+    "DORA:2022/2554:Art28": {
+      "id": "DORA:2022/2554:Art28",
+      "instrument": "Regulation (EU) 2022/2554 (DORA)",
+      "ref": "Art. 28",
+      "title": "General principles for the management of ICT third-party risk",
+      "summary": "Financial entities stay responsible when they rely on ICT third-party providers and manage that risk inside their ICT risk management framework, including concentration risk.",
+      "source_url": "https://eur-lex.europa.eu/eli/reg/2022/2554/oj"
+    },
+    "DORA:2022/2554:Art28(8)": {
+      "id": "DORA:2022/2554:Art28(8)",
+      "instrument": "Regulation (EU) 2022/2554 (DORA)",
+      "ref": "Art. 28(8)",
+      "title": "General principles for the management of ICT third-party risk (exit strategies)",
+      "summary": "For ICT services that support critical or important functions, financial entities need exit strategies that let them leave a provider without disrupting the business.",
+      "source_url": "https://eur-lex.europa.eu/eli/reg/2022/2554/oj"
+    },
+    "GDPR:Art32": {
+      "id": "GDPR:Art32",
+      "instrument": "Regulation (EU) 2016/679 (GDPR)",
+      "ref": "Art. 32",
+      "title": "Security of processing",
+      "summary": "Controllers and processors apply security measures appropriate to the risk, such as encryption, resilience, recovery and regular testing.",
+      "source_url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
+    },
+    "NIS2:2022/2555:Art21(2)(d)": {
+      "id": "NIS2:2022/2555:Art21(2)(d)",
+      "instrument": "Directive (EU) 2022/2555 (NIS2)",
+      "ref": "Art. 21(2)(d)",
+      "title": "Cybersecurity risk-management measures (supply chain security)",
+      "summary": "Risk-management measures cover supply chain security, including the relationship with direct suppliers and service providers.",
+      "source_url": "https://eur-lex.europa.eu/eli/dir/2022/2555/oj"
+    },
+    "NIS2:2022/2555:Art21(2)(j)": {
+      "id": "NIS2:2022/2555:Art21(2)(j)",
+      "instrument": "Directive (EU) 2022/2555 (NIS2)",
+      "ref": "Art. 21(2)(j)",
+      "title": "Cybersecurity risk-management measures (authentication and secured communications)",
+      "summary": "Risk-management measures include multi-factor or continuous authentication and secured communications where appropriate.",
+      "source_url": "https://eur-lex.europa.eu/eli/dir/2022/2555/oj"
+    },
+    "NIS2:2024/2690:Annex-3.2": {
+      "id": "NIS2:2024/2690:Annex-3.2",
+      "instrument": "Commission Implementing Regulation (EU) 2024/2690",
+      "ref": "Annex, point 3.2",
+      "title": "Monitoring and logging",
+      "summary": "In-scope entities monitor and log activity on their network and information systems, decide what is logged, review logs and keep them for a defined period.",
+      "source_url": "https://eur-lex.europa.eu/eli/reg_impl/2024/2690/oj"
+    }
+  },
+  "clause_attribution": "© European Union, https://eur-lex.europa.eu (Commission Decision 2011/833/EU)",
+  "disclaimer": "c4-guardrails assesses what a design-time diagram declares against deterministic rules. It evidences gaps and proposes fixes; it is not a compliance certification and not legal advice."
+}

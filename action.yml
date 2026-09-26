@@ -1,0 +1,100 @@
+name: c4-guardrails
+description: Deterministic architecture guardrails for C4 diagrams, with EU regulatory clause citations. No account, no AI.
+author: Radosław Brus
+branding:
+  icon: shield
+  color: blue
+
+inputs:
+  files:
+    description: Space-separated glob patterns of Mermaid C4 (*.mmd) and JSON (*.c4.json) models. Symlinks are skipped.
+    required: false
+    default: "**/*.mmd **/*.c4.json"
+  fail-on:
+    description: Fail when a finding is at or above this severity (critical, high, medium, low, info, none).
+    required: false
+    default: high
+  sarif:
+    description: Path of the SARIF 2.1.0 file to write.
+    required: false
+    default: c4-guardrails.sarif
+  summary:
+    description: Write a Markdown summary to the job summary ("true" or "false").
+    required: false
+    default: "true"
+
+outputs:
+  sarif:
+    description: Path of the SARIF file (empty when no model files matched).
+    value: ${{ steps.run.outputs.sarif }}
+  exit-code:
+    description: 0 pass, 1 findings at or above fail-on, 2 input error.
+    value: ${{ steps.run.outputs.exit-code }}
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Go
+      uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+      with:
+        go-version-file: ${{ github.action_path }}/go.mod
+        cache: false
+
+    - name: Build c4g
+      shell: bash
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+      run: |
+        set -euo pipefail
+        cd "$ACTION_PATH"
+        go build -trimpath -o "$RUNNER_TEMP/c4g" ./cmd/c4g
+
+    - name: Run c4g
+      id: run
+      shell: bash
+      env:
+        INPUT_FILES: ${{ inputs.files }}
+        INPUT_FAIL_ON: ${{ inputs.fail-on }}
+        INPUT_SARIF: ${{ inputs.sarif }}
+        INPUT_SUMMARY: ${{ inputs.summary }}
+      run: |
+        set -euo pipefail
+        shopt -s globstar nullglob
+        declare -A seen=()
+        files=()
+        read -r -a patterns <<< "$INPUT_FILES"
+        for pattern in "${patterns[@]}"; do
+          for f in $pattern; do
+            if [[ -L "$f" ]]; then echo "c4-guardrails: skipping symlink"; continue; fi
+            [[ -f "$f" ]] || continue
+            [[ "$f" == -* ]] && f="./$f"
+            [[ -n "${seen[$f]:-}" ]] && continue
+            seen[$f]=1
+            files+=("$f")
+          done
+        done
+        if [[ ${#files[@]} -eq 0 ]]; then
+          echo "c4-guardrails: no model files matched"
+          echo "sarif=" >> "$GITHUB_OUTPUT"
+          echo "exit-code=0" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+        summary_file="$RUNNER_TEMP/c4-guardrails-summary.md"
+        # Model text is untrusted: stop workflow-command processing while c4g prints.
+        token="c4g-$(od -An -N16 -tx1 /dev/urandom | tr -d ' \n')"
+        echo "::stop-commands::${token}"
+        set +e
+        "$RUNNER_TEMP/c4g" -fail-on "$INPUT_FAIL_ON" -sarif "$INPUT_SARIF" -md "$summary_file" "${files[@]}"
+        code=$?
+        set -e
+        echo "::${token}::"
+        if [[ "$INPUT_SUMMARY" == "true" && -f "$summary_file" ]]; then
+          cat "$summary_file" >> "$GITHUB_STEP_SUMMARY"
+        fi
+        if [[ -f "$INPUT_SARIF" ]]; then
+          echo "sarif=$INPUT_SARIF" >> "$GITHUB_OUTPUT"
+        else
+          echo "sarif=" >> "$GITHUB_OUTPUT"
+        fi
+        echo "exit-code=$code" >> "$GITHUB_OUTPUT"
+        exit "$code"

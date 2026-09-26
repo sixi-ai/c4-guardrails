@@ -1,0 +1,23 @@
+{
+  "title": "Credit scoring service (JSON input example)",
+  "boundaries": [
+    { "id": "lender", "name": "Lender", "type": "system" }
+  ],
+  "nodes": [
+    { "id": "applicant", "type": "person", "name": "Loan applicant" },
+    { "id": "portal", "type": "container", "name": "Loan portal", "technology": "TypeScript", "boundary": "lender", "tags": ["internet"] },
+    { "id": "scoring", "type": "container", "name": "Credit scoring model", "technology": "Python, gradient boosting", "boundary": "lender", "tags": ["ai", "high-risk", "pii"] },
+    { "id": "officer", "type": "person", "name": "Credit officer" },
+    { "id": "review", "type": "container", "name": "Decision review", "technology": "Java", "boundary": "lender", "tags": ["oversight"] },
+    { "id": "apps", "type": "database", "name": "Applications DB", "technology": "PostgreSQL", "boundary": "lender", "tags": ["pii"], "attrs": { "at_rest": "aes256" } },
+    { "id": "bureau", "type": "system_ext", "name": "Credit bureau", "tags": ["critical"], "attrs": { "region": "eu" } }
+  ],
+  "edges": [
+    { "from": "applicant", "to": "portal", "label": "Applies for a loan", "protocol": "HTTPS", "auth": "oidc" },
+    { "from": "portal", "to": "scoring", "label": "Requests a score", "protocol": "HTTPS", "auth": "mtls", "tags": ["pii"] },
+    { "from": "scoring", "to": "apps", "label": "Reads application", "protocol": "JDBC/TLS", "auth": "managed_identity" },
+    { "from": "scoring", "to": "bureau", "label": "Fetches credit history", "protocol": "HTTPS", "auth": "none" },
+    { "from": "scoring", "to": "review", "label": "Sends borderline cases", "protocol": "HTTPS", "auth": "mtls" },
+    { "from": "officer", "to": "review", "label": "Confirms or overrides", "protocol": "HTTPS", "auth": "oidc" }
+  ]
+}

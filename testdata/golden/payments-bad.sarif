@@ -1,0 +1,647 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "c4-guardrails",
+          "version": "0.1.0",
+          "informationUri": "https://github.com/rbrus/c4-guardrails",
+          "rules": [
+            {
+              "id": "CG001",
+              "name": "plaintext-transport-across-boundary",
+              "shortDescription": {
+                "text": "Plaintext transport across a trust boundary"
+              },
+              "fullDescription": {
+                "text": "A relationship that leaves a trust zone (person, external system or another boundary) declares a protocol without TLS, so data in transit is readable and alterable on the path."
+              },
+              "help": {
+                "text": "Plaintext transport across a trust boundary\n\nWhy: A relationship that leaves a trust zone (person, external system or another boundary) declares a protocol without TLS, so data in transit is readable and alterable on the path.\n\nFix: Use TLS (HTTPS, JDBC/TLS, AMQPS, mTLS ...) and say so in the technology label, or add $tags=\"enc:tls\".\n\nClauses: GDPR:Art32(1)(a) (Security of processing (pseudonymisation and encryption)) https://eur-lex.europa.eu/eli/reg/2016/679/oj; NIS2:2022/2555:Art21(2)(h) (Cybersecurity risk-management measures (cryptography and encryption)) https://eur-lex.europa.eu/eli/dir/2022/2555/oj\n\nc4-guardrails assesses what a design-time diagram declares against deterministic rules. It evidences gaps and proposes fixes; it is not a compliance certification and not legal advice.",
+                "markdown": "**Plaintext transport across a trust boundary**\n\nA relationship that leaves a trust zone \\(person, external system or another boundary\\) declares a protocol without TLS, so data in transit is readable and alterable on the path.\n\n**Proposed fix:** Use TLS \\(HTTPS, JDBC/TLS, AMQPS, mTLS ...\\) and say so in the technology label, or add $tags=\u0026quot;enc\\:tls\u0026quot;.\n\n**Clauses**\n\n- [GDPR\\:Art32\\(1\\)\\(a\\)](https://eur-lex.europa.eu/eli/reg/2016/679/oj): Security of processing \\(pseudonymisation and encryption\\). Pseudonymisation and encryption of personal data are named as examples of appropriate security measures.\n- [NIS2\\:2022/2555\\:Art21\\(2\\)\\(h\\)](https://eur-lex.europa.eu/eli/dir/2022/2555/oj): Cybersecurity risk-management measures \\(cryptography and encryption\\). Risk-management measures include policies on the use of cryptography and, where appropriate, encryption.\n\n_c4-guardrails assesses what a design-time diagram declares against deterministic rules. It evidences gaps and proposes fixes; it is not a compliance certification and not legal advice._\n"
+              },
+              "helpUri": "https://github.com/rbrus/c4-guardrails#rules",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "clauses": [
+                  "GDPR:Art32(1)(a)",
+                  "NIS2:2022/2555:Art21(2)(h)"
+                ],
+                "precision": "high",
+                "security-severity": "8.0",
+                "tags": [
+                  "security",
+                  "design-time",
+                  "c4",
+                  "GDPR:Art32(1)(a)",
+                  "NIS2:2022/2555:Art21(2)(h)"
+                ]
+              }
+            },
+            {
+              "id": "CG002",
+              "name": "external-call-without-auth",
+              "shortDescription": {
+                "text": "External system called without declared authentication"
+              },
+              "fullDescription": {
+                "text": "A call to or from a third-party system declares no authentication (or declares none), so the model does not evidence who may use the interface."
+              },
+              "help": {
+                "text": "External system called without declared authentication\n\nWhy: A call to or from a third-party system declares no authentication (or declares none), so the model does not evidence who may use the interface.\n\nFix: Declare the mechanism, e.g. $tags=\"auth:oauth2\", \"auth:mtls\" or \"auth:managed_identity\".\n\nClauses: NIS2:2022/2555:Art21(2)(j) (Cybersecurity risk-management measures (authentication and secured communications)) https://eur-lex.europa.eu/eli/dir/2022/2555/oj; GDPR:Art32 (Security of processing) https://eur-lex.europa.eu/eli/reg/2016/679/oj\n\nc4-guardrails assesses what a design-time diagram declares against deterministic rules. It evidences gaps and proposes fixes; it is not a compliance certification and not legal advice.",
+                "markdown": "**External system called without declared authentication**\n\nA call to or from a third-party system declares no authentication \\(or declares none\\), so the model does not evidence who may use the interface.\n\n**Proposed fix:** Declare the mechanism, e.g. $tags=\u0026quot;auth\\:oauth2\u0026quot;, \u0026quot;auth\\:mtls\u0026quot; or \u0026quot;auth\\:managed\\_identity\u0026quot;.\n\n**Clauses**\n\n- [NIS2\\:2022/2555\\:Art21\\(2\\)\\(j\\)](https://eur-lex.europa.eu/eli/dir/2022/2555/oj): Cybersecurity risk-management measures \\(authentication and secured communications\\). Risk-management measures include multi-factor or continuous authentication and secured communications where appropriate.\n- [GDPR\\:Art32](https://eur-lex.europa.eu/eli/reg/2016/679/oj): Security of processing. Controllers and processors apply security measures appropriate to the risk, such as encryption, resilience, recovery and regular testing.\n\n_c4-guardrails assesses what a design-time diagram declares against deterministic rules. It evidences gaps and proposes fixes; it is not a compliance certification and not legal advice._\n"
+              },
+              "helpUri": "https://github.com/rbrus/c4-guardrails#rules",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "clauses": [
+                  "NIS2:2022/2555:Art21(2)(j)",
+                  "GDPR:Art32"
+                ],
+                "precision": "high",
+                "security-severity": "8.0",
+                "tags": [
+                  "security",
+                  "design-time",
+                  "c4",
+                  "NIS2:2022/2555:Art21(2)(j)",
+                  "GDPR:Art32"
+                ]
+              }
+            },
+            {
+              "id": "CG003",
+              "name": "personal-data-store-unencrypted",
+              "shortDescription": {
+                "text": "Personal-data store without declared encryption at rest"
+              },
+              "fullDescription": {
+                "text": "A database tagged as holding personal data does not declare encryption at rest."
+              },
+              "help": {
+                "text": "Personal-data store without declared encryption at rest\n\nWhy: A database tagged as holding personal data does not declare encryption at rest.\n\nFix: Declare it, e.g. $tags=\"pii;at_rest:aes256\" (or at_rest:cmk for customer-managed keys).\n\nClauses: GDPR:Art32(1)(a) (Security of processing (pseudonymisation and encryption)) https://eur-lex.europa.eu/eli/reg/2016/679/oj; NIS2:2022/2555:Art21(2)(h) (Cybersecurity risk-management measures (cryptography and encryption)) https://eur-lex.europa.eu/eli/dir/2022/2555/oj\n\nc4-guardrails assesses what a design-time diagram declares against deterministic rules. It evidences gaps and proposes fixes; it is not a compliance certification and not legal advice.",
+                "markdown": "**Personal-data store without declared encryption at rest**\n\nA database tagged as holding personal data does not declare encryption at rest.\n\n**Proposed fix:** Declare it, e.g. $tags=\u0026quot;pii;at\\_rest\\:aes256\u0026quot; \\(or at\\_rest\\:cmk for customer-managed keys\\).\n\n**Clauses**\n\n- [GDPR\\:Art32\\(1\\)\\(a\\)](https://eur-lex.europa.eu/eli/reg/2016/679/oj): Security of processing \\(pseudonymisation and encryption\\). Pseudonymisation and encryption of personal data are named as examples of appropriate security measures.\n- [NIS2\\:2022/2555\\:Art21\\(2\\)\\(h\\)](https://eur-lex.europa.eu/eli/dir/2022/2555/oj): Cybersecurity risk-management measures \\(cryptography and encryption\\). Risk-management measures include policies on the use of cryptography and, where appropriate, encryption.\n\n_c4-guardrails assesses what a design-time diagram declares against deterministic rules. It evidences gaps and proposes fixes; it is not a compliance certification and not legal advice._\n"
+              },
+              "helpUri": "https://github.com/rbrus/c4-guardrails#rules",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "clauses": [
+                  "GDPR:Art32(1)(a)",
+                  "NIS2:2022/2555:Art21(2)(h)"
+                ],
+                "precision": "high",
+                "security-severity": "8.0",
+                "tags": [
+                  "security",
+                  "design-time",
+                  "c4",
+                  "GDPR:Art32(1)(a)",
+                  "NIS2:2022/2555:Art21(2)(h)"
+                ]
+              }
+            },
+            {
+              "id": "CG004",
+              "name": "ai-personal-data-without-oversight",
+              "shortDescription": {
+                "text": "AI endpoint receives personal data without a human-oversight component"
+              },
+              "fullDescription": {
+                "text": "An element tagged ai/llm receives personal data, and the model declares no human-oversight component (review queue, escalation to a person, override)."
+              },
+              "help": {
+                "text": "AI endpoint receives personal data without a human-oversight component\n\nWhy: An element tagged ai/llm receives personal data, and the model declares no human-oversight component (review queue, escalation to a person, override).\n\nFix: Add the oversight step to the design and tag it, e.g. Container(review, \"Human review\", ..., $tags=\"oversight\").\n\nClauses: AIACT:2024/1689:Art14 (Human oversight) https://eur-lex.europa.eu/eli/reg/2024/1689/oj; GDPR:Art25 (Data protection by design and by default) https://eur-lex.europa.eu/eli/reg/2016/679/oj\n\nc4-guardrails assesses what a design-time diagram declares against deterministic rules. It evidences gaps and proposes fixes; it is not a compliance certification and not legal advice.",
+                "markdown": "**AI endpoint receives personal data without a human-oversight component**\n\nAn element tagged ai/llm receives personal data, and the model declares no human-oversight component \\(review queue, escalation to a person, override\\).\n\n**Proposed fix:** Add the oversight step to the design and tag it, e.g. Container\\(review, \u0026quot;Human review\u0026quot;, ..., $tags=\u0026quot;oversight\u0026quot;\\).\n\n**Clauses**\n\n- [AIACT\\:2024/1689\\:Art14](https://eur-lex.europa.eu/eli/reg/2024/1689/oj): Human oversight. High-risk AI systems have to be designed so that people can oversee them effectively while in use, proportionate to risk, autonomy and context. For other AI systems this is a widely used design practice.\n- [GDPR\\:Art25](https://eur-lex.europa.eu/eli/reg/2016/679/oj): Data protection by design and by default. Controllers build appropriate technical and organisational measures into the design of processing and, by default, process only the personal data each purpose needs.\n\n_c4-guardrails assesses what a design-time diagram declares against deterministic rules. It evidences gaps and proposes fixes; it is not a compliance certification and not legal advice._\n"
+              },
+              "helpUri": "https://github.com/rbrus/c4-guardrails#rules",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "clauses": [
+                  "AIACT:2024/1689:Art14",
+                  "GDPR:Art25"
+                ],
+                "precision": "high",
+                "security-severity": "8.0",
+                "tags": [
+                  "security",
+                  "design-time",
+                  "c4",
+                  "AIACT:2024/1689:Art14",
+                  "GDPR:Art25"
+                ]
+              }
+            },
+            {
+              "id": "CG005",
+              "name": "critical-third-party-without-exit",
+              "shortDescription": {
+                "text": "Critical third-party ICT service without a declared exit or alternative"
+              },
+              "fullDescription": {
+                "text": "An external system tagged critical has no declared exit strategy or alternative provider, so the design shows a single point of third-party dependency."
+              },
+              "help": {
+                "text": "Critical third-party ICT service without a declared exit or alternative\n\nWhy: An external system tagged critical has no declared exit strategy or alternative provider, so the design shows a single point of third-party dependency.\n\nFix: Declare the exit path, e.g. $tags=\"critical;exit:secondary-provider\", and draw the alternative if it exists.\n\nClauses: DORA:2022/2554:Art28(8) (General principles for the management of ICT third-party risk (exit strategies)) https://eur-lex.europa.eu/eli/reg/2022/2554/oj; DORA:2022/2554:Art28 (General principles for the management of ICT third-party risk) https://eur-lex.europa.eu/eli/reg/2022/2554/oj; NIS2:2022/2555:Art21(2)(d) (Cybersecurity risk-management measures (supply chain security)) https://eur-lex.europa.eu/eli/dir/2022/2555/oj\n\nc4-guardrails assesses what a design-time diagram declares against deterministic rules. It evidences gaps and proposes fixes; it is not a compliance certification and not legal advice.",
+                "markdown": "**Critical third-party ICT service without a declared exit or alternative**\n\nAn external system tagged critical has no declared exit strategy or alternative provider, so the design shows a single point of third-party dependency.\n\n**Proposed fix:** Declare the exit path, e.g. $tags=\u0026quot;critical;exit\\:secondary-provider\u0026quot;, and draw the alternative if it exists.\n\n**Clauses**\n\n- [DORA\\:2022/2554\\:Art28\\(8\\)](https://eur-lex.europa.eu/eli/reg/2022/2554/oj): General principles for the management of ICT third-party risk \\(exit strategies\\). For ICT services that support critical or important functions, financial entities need exit strategies that let them leave a provider without disrupting the business.\n- [DORA\\:2022/2554\\:Art28](https://eur-lex.europa.eu/eli/reg/2022/2554/oj): General principles for the management of ICT third-party risk. Financial entities stay responsible when they rely on ICT third-party providers and manage that risk inside their ICT risk management framework, including concentration risk.\n- [NIS2\\:2022/2555\\:Art21\\(2\\)\\(d\\)](https://eur-lex.europa.eu/eli/dir/2022/2555/oj): Cybersecurity risk-management measures \\(supply chain security\\). Risk-management measures cover supply chain security, including the relationship with direct suppliers and service providers.\n\n_c4-guardrails assesses what a design-time diagram declares against deterministic rules. It evidences gaps and proposes fixes; it is not a compliance certification and not legal advice._\n"
+              },
+              "helpUri": "https://github.com/rbrus/c4-guardrails#rules",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "clauses": [
+                  "DORA:2022/2554:Art28(8)",
+                  "DORA:2022/2554:Art28",
+                  "NIS2:2022/2555:Art21(2)(d)"
+                ],
+                "precision": "high",
+                "security-severity": "5.5",
+                "tags": [
+                  "security",
+                  "design-time",
+                  "c4",
+                  "DORA:2022/2554:Art28(8)",
+                  "DORA:2022/2554:Art28",
+                  "NIS2:2022/2555:Art21(2)(d)"
+                ]
+              }
+            },
+            {
+              "id": "CG006",
+              "name": "database-reachable-from-internet",
+              "shortDescription": {
+                "text": "Database reachable directly from a person or the internet"
+              },
+              "fullDescription": {
+                "text": "A person, or an element in an internet-facing zone, connects straight to a database without an application tier in between."
+              },
+              "help": {
+                "text": "Database reachable directly from a person or the internet\n\nWhy: A person, or an element in an internet-facing zone, connects straight to a database without an application tier in between.\n\nFix: Route access through an application or API tier that authenticates and authorises; keep the database in an internal zone.\n\nClauses: NIS2:2024/2690:Annex-6.8 (Network segmentation) https://eur-lex.europa.eu/eli/reg_impl/2024/2690/oj; GDPR:Art25 (Data protection by design and by default) https://eur-lex.europa.eu/eli/reg/2016/679/oj\n\nc4-guardrails assesses what a design-time diagram declares against deterministic rules. It evidences gaps and proposes fixes; it is not a compliance certification and not legal advice.",
+                "markdown": "**Database reachable directly from a person or the internet**\n\nA person, or an element in an internet-facing zone, connects straight to a database without an application tier in between.\n\n**Proposed fix:** Route access through an application or API tier that authenticates and authorises; keep the database in an internal zone.\n\n**Clauses**\n\n- [NIS2\\:2024/2690\\:Annex-6.8](https://eur-lex.europa.eu/eli/reg_impl/2024/2690/oj): Network segmentation. In-scope entities segment systems into zones by risk, keep critical systems in secured zones and restrict traffic between zones to what operation needs.\n- [GDPR\\:Art25](https://eur-lex.europa.eu/eli/reg/2016/679/oj): Data protection by design and by default. Controllers build appropriate technical and organisational measures into the design of processing and, by default, process only the personal data each purpose needs.\n\n_c4-guardrails assesses what a design-time diagram declares against deterministic rules. It evidences gaps and proposes fixes; it is not a compliance certification and not legal advice._\n"
+              },
+              "helpUri": "https://github.com/rbrus/c4-guardrails#rules",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "clauses": [
+                  "NIS2:2024/2690:Annex-6.8",
+                  "GDPR:Art25"
+                ],
+                "precision": "high",
+                "security-severity": "8.0",
+                "tags": [
+                  "security",
+                  "design-time",
+                  "c4",
+                  "NIS2:2024/2690:Annex-6.8",
+                  "GDPR:Art25"
+                ]
+              }
+            },
+            {
+              "id": "CG007",
+              "name": "no-logging-for-personal-data",
+              "shortDescription": {
+                "text": "No logging or monitoring component in a system handling personal data"
+              },
+              "fullDescription": {
+                "text": "The model declares elements that handle personal data but no logging, monitoring or SIEM element."
+              },
+              "help": {
+                "text": "No logging or monitoring component in a system handling personal data\n\nWhy: The model declares elements that handle personal data but no logging, monitoring or SIEM element.\n\nFix: Add the log sink to the diagram and tag it, e.g. Container(logs, \"Central logging\", \"OpenTelemetry\", $tags=\"logging\").\n\nClauses: NIS2:2024/2690:Annex-3.2 (Monitoring and logging) https://eur-lex.europa.eu/eli/reg_impl/2024/2690/oj; DORA-RTS:2024/1774:Art12 (Logging) https://eur-lex.europa.eu/eli/reg_del/2024/1774/oj\n\nc4-guardrails assesses what a design-time diagram declares against deterministic rules. It evidences gaps and proposes fixes; it is not a compliance certification and not legal advice.",
+                "markdown": "**No logging or monitoring component in a system handling personal data**\n\nThe model declares elements that handle personal data but no logging, monitoring or SIEM element.\n\n**Proposed fix:** Add the log sink to the diagram and tag it, e.g. Container\\(logs, \u0026quot;Central logging\u0026quot;, \u0026quot;OpenTelemetry\u0026quot;, $tags=\u0026quot;logging\u0026quot;\\).\n\n**Clauses**\n\n- [NIS2\\:2024/2690\\:Annex-3.2](https://eur-lex.europa.eu/eli/reg_impl/2024/2690/oj): Monitoring and logging. In-scope entities monitor and log activity on their network and information systems, decide what is logged, review logs and keep them for a defined period.\n- [DORA-RTS\\:2024/1774\\:Art12](https://eur-lex.europa.eu/eli/reg_del/2024/1774/oj): Logging. Financial entities define and run logging procedures and tools\\: which events are logged, how long logs are kept and how log data is protected.\n\n_c4-guardrails assesses what a design-time diagram declares against deterministic rules. It evidences gaps and proposes fixes; it is not a compliance certification and not legal advice._\n"
+              },
+              "helpUri": "https://github.com/rbrus/c4-guardrails#rules",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "clauses": [
+                  "NIS2:2024/2690:Annex-3.2",
+                  "DORA-RTS:2024/1774:Art12"
+                ],
+                "precision": "high",
+                "security-severity": "5.5",
+                "tags": [
+                  "security",
+                  "design-time",
+                  "c4",
+                  "NIS2:2024/2690:Annex-3.2",
+                  "DORA-RTS:2024/1774:Art12"
+                ]
+              }
+            },
+            {
+              "id": "CG008",
+              "name": "credentials-without-secrets-store",
+              "shortDescription": {
+                "text": "Credential-based connections without a secrets store"
+              },
+              "fullDescription": {
+                "text": "Relationships authenticate with shared secrets (API keys, passwords) but the model has no secrets store, so it does not evidence where those secrets live."
+              },
+              "help": {
+                "text": "Credential-based connections without a secrets store\n\nWhy: Relationships authenticate with shared secrets (API keys, passwords) but the model has no secrets store, so it does not evidence where those secrets live.\n\nFix: Add a secrets store (Key Vault, Vault, KMS) tagged secrets, or switch to workload identity (auth:managed_identity, auth:mtls).\n\nClauses: NIS2:2022/2555:Art21(2)(i) (Cybersecurity risk-management measures (access control and asset management)) https://eur-lex.europa.eu/eli/dir/2022/2555/oj; GDPR:Art32 (Security of processing) https://eur-lex.europa.eu/eli/reg/2016/679/oj\n\nc4-guardrails assesses what a design-time diagram declares against deterministic rules. It evidences gaps and proposes fixes; it is not a compliance certification and not legal advice.",
+                "markdown": "**Credential-based connections without a secrets store**\n\nRelationships authenticate with shared secrets \\(API keys, passwords\\) but the model has no secrets store, so it does not evidence where those secrets live.\n\n**Proposed fix:** Add a secrets store \\(Key Vault, Vault, KMS\\) tagged secrets, or switch to workload identity \\(auth\\:managed\\_identity, auth\\:mtls\\).\n\n**Clauses**\n\n- [NIS2\\:2022/2555\\:Art21\\(2\\)\\(i\\)](https://eur-lex.europa.eu/eli/dir/2022/2555/oj): Cybersecurity risk-management measures \\(access control and asset management\\). Risk-management measures include access control policies and asset management, which covers how credentials are held.\n- [GDPR\\:Art32](https://eur-lex.europa.eu/eli/reg/2016/679/oj): Security of processing. Controllers and processors apply security measures appropriate to the risk, such as encryption, resilience, recovery and regular testing.\n\n_c4-guardrails assesses what a design-time diagram declares against deterministic rules. It evidences gaps and proposes fixes; it is not a compliance certification and not legal advice._\n"
+              },
+              "helpUri": "https://github.com/rbrus/c4-guardrails#rules",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "clauses": [
+                  "NIS2:2022/2555:Art21(2)(i)",
+                  "GDPR:Art32"
+                ],
+                "precision": "high",
+                "security-severity": "5.5",
+                "tags": [
+                  "security",
+                  "design-time",
+                  "c4",
+                  "NIS2:2022/2555:Art21(2)(i)",
+                  "GDPR:Art32"
+                ]
+              }
+            },
+            {
+              "id": "CG009",
+              "name": "high-risk-ai-without-records",
+              "shortDescription": {
+                "text": "High-risk AI system without a record-keeping log store"
+              },
+              "fullDescription": {
+                "text": "An element tagged ai and high-risk has no connected store for automatically generated logs."
+              },
+              "help": {
+                "text": "High-risk AI system without a record-keeping log store\n\nWhy: An element tagged ai and high-risk has no connected store for automatically generated logs.\n\nFix: Add an append-only log store tagged records and draw the relationship from the AI system to it.\n\nClauses: AIACT:2024/1689:Art12 (Record-keeping) https://eur-lex.europa.eu/eli/reg/2024/1689/oj; AIACT:2024/1689:Art26(6) (Obligations of deployers of high-risk AI systems (retention of logs)) https://eur-lex.europa.eu/eli/reg/2024/1689/oj\n\nc4-guardrails assesses what a design-time diagram declares against deterministic rules. It evidences gaps and proposes fixes; it is not a compliance certification and not legal advice.",
+                "markdown": "**High-risk AI system without a record-keeping log store**\n\nAn element tagged ai and high-risk has no connected store for automatically generated logs.\n\n**Proposed fix:** Add an append-only log store tagged records and draw the relationship from the AI system to it.\n\n**Clauses**\n\n- [AIACT\\:2024/1689\\:Art12](https://eur-lex.europa.eu/eli/reg/2024/1689/oj): Record-keeping. High-risk AI systems have to be able to record events automatically \\(logs\\) across their lifetime so that their operation can be traced and monitored.\n- [AIACT\\:2024/1689\\:Art26\\(6\\)](https://eur-lex.europa.eu/eli/reg/2024/1689/oj): Obligations of deployers of high-risk AI systems \\(retention of logs\\). Deployers keep the logs a high-risk AI system generates under their control for an appropriate period, at least six months unless other law says otherwise.\n\n_c4-guardrails assesses what a design-time diagram declares against deterministic rules. It evidences gaps and proposes fixes; it is not a compliance certification and not legal advice._\n"
+              },
+              "helpUri": "https://github.com/rbrus/c4-guardrails#rules",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "clauses": [
+                  "AIACT:2024/1689:Art12",
+                  "AIACT:2024/1689:Art26(6)"
+                ],
+                "precision": "high",
+                "security-severity": "8.0",
+                "tags": [
+                  "security",
+                  "design-time",
+                  "c4",
+                  "AIACT:2024/1689:Art12",
+                  "AIACT:2024/1689:Art26(6)"
+                ]
+              }
+            },
+            {
+              "id": "CG010",
+              "name": "personal-data-to-external-without-region",
+              "shortDescription": {
+                "text": "Personal data sent to an external system with no declared processing region"
+              },
+              "fullDescription": {
+                "text": "Personal data flows to a third-party system whose processing location is not declared, so the model cannot show whether a transfer outside the EU/EEA happens."
+              },
+              "help": {
+                "text": "Personal data sent to an external system with no declared processing region\n\nWhy: Personal data flows to a third-party system whose processing location is not declared, so the model cannot show whether a transfer outside the EU/EEA happens.\n\nFix: Declare the location on the external system, e.g. $tags=\"region:eu-west\", and record the transfer safeguard if it is outside the EU/EEA.\n\nClauses: GDPR:Art44 (General principle for transfers) https://eur-lex.europa.eu/eli/reg/2016/679/oj; GDPR:Art46 (Transfers subject to appropriate safeguards) https://eur-lex.europa.eu/eli/reg/2016/679/oj\n\nc4-guardrails assesses what a design-time diagram declares against deterministic rules. It evidences gaps and proposes fixes; it is not a compliance certification and not legal advice.",
+                "markdown": "**Personal data sent to an external system with no declared processing region**\n\nPersonal data flows to a third-party system whose processing location is not declared, so the model cannot show whether a transfer outside the EU/EEA happens.\n\n**Proposed fix:** Declare the location on the external system, e.g. $tags=\u0026quot;region\\:eu-west\u0026quot;, and record the transfer safeguard if it is outside the EU/EEA.\n\n**Clauses**\n\n- [GDPR\\:Art44](https://eur-lex.europa.eu/eli/reg/2016/679/oj): General principle for transfers. Personal data leaves the EU/EEA only under the conditions of GDPR Chapter V, so knowing where a recipient processes data matters.\n- [GDPR\\:Art46](https://eur-lex.europa.eu/eli/reg/2016/679/oj): Transfers subject to appropriate safeguards. Without an adequacy decision, a transfer to a third country needs appropriate safeguards such as standard data protection clauses.\n\n_c4-guardrails assesses what a design-time diagram declares against deterministic rules. It evidences gaps and proposes fixes; it is not a compliance certification and not legal advice._\n"
+              },
+              "helpUri": "https://github.com/rbrus/c4-guardrails#rules",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "clauses": [
+                  "GDPR:Art44",
+                  "GDPR:Art46"
+                ],
+                "precision": "high",
+                "security-severity": "5.5",
+                "tags": [
+                  "security",
+                  "design-time",
+                  "c4",
+                  "GDPR:Art44",
+                  "GDPR:Art46"
+                ]
+              }
+            },
+            {
+              "id": "CG011",
+              "name": "missing-fact",
+              "shortDescription": {
+                "text": "Missing fact"
+              },
+              "fullDescription": {
+                "text": "Some rules could not decide because the model does not state a fact (for example the transport of a relationship that crosses a boundary), or an attribute key is not recognised. This is information, not an error."
+              },
+              "help": {
+                "text": "Missing fact\n\nWhy: Some rules could not decide because the model does not state a fact (for example the transport of a relationship that crosses a boundary), or an attribute key is not recognised. This is information, not an error.\n\nFix: State the fact in the technology label or with $tags (see the attribute vocabulary in the README).\n\nClauses: no clause found\n\nc4-guardrails assesses what a design-time diagram declares against deterministic rules. It evidences gaps and proposes fixes; it is not a compliance certification and not legal advice.",
+                "markdown": "**Missing fact**\n\nSome rules could not decide because the model does not state a fact \\(for example the transport of a relationship that crosses a boundary\\), or an attribute key is not recognised. This is information, not an error.\n\n**Proposed fix:** State the fact in the technology label or with $tags \\(see the attribute vocabulary in the README\\).\n\n**Clauses**\n\n- no clause found\n\n_c4-guardrails assesses what a design-time diagram declares against deterministic rules. It evidences gaps and proposes fixes; it is not a compliance certification and not legal advice._\n"
+              },
+              "helpUri": "https://github.com/rbrus/c4-guardrails#rules",
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "clauses": [],
+                "precision": "high",
+                "security-severity": "0.0",
+                "tags": [
+                  "security",
+                  "design-time",
+                  "c4"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "CG001",
+          "ruleIndex": 0,
+          "level": "error",
+          "message": {
+            "text": "Plaintext transport across a trust boundary: \"Edits rejected orders\" crosses a trust boundary: SQL declared without TLS. (Back-office clerk → Payments ledger) Clauses: GDPR:Art32(1)(a), NIS2:2022/2555:Art21(2)(h)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/payments-bad.mmd"
+                },
+                "region": {
+                  "startLine": 19
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "c4guardrails/v1": "ec07fea88a7e487b34ed7071d0e4978e"
+          },
+          "properties": {
+            "clauses": [
+              "GDPR:Art32(1)(a)",
+              "NIS2:2022/2555:Art21(2)(h)"
+            ],
+            "severity": "high"
+          }
+        },
+        {
+          "ruleId": "CG002",
+          "ruleIndex": 1,
+          "level": "error",
+          "message": {
+            "text": "External system called without declared authentication: \"Sends payment orders\": no authentication declared (missing fact). (Payment engine → Clearing ICT provider) Clauses: NIS2:2022/2555:Art21(2)(j), GDPR:Art32"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/payments-bad.mmd"
+                },
+                "region": {
+                  "startLine": 21
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "c4guardrails/v1": "a617e60f6f41f7ba1f2068a8a82740ff"
+          },
+          "properties": {
+            "clauses": [
+              "NIS2:2022/2555:Art21(2)(j)",
+              "GDPR:Art32"
+            ],
+            "severity": "high"
+          }
+        },
+        {
+          "ruleId": "CG003",
+          "ruleIndex": 2,
+          "level": "error",
+          "message": {
+            "text": "Personal-data store without declared encryption at rest: Holds personal data; encryption at rest is not declared (missing fact). (Payments ledger) Clauses: GDPR:Art32(1)(a), NIS2:2022/2555:Art21(2)(h)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/payments-bad.mmd"
+                },
+                "region": {
+                  "startLine": 11
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "c4guardrails/v1": "d95796b353340ffa91208034f45496d4"
+          },
+          "properties": {
+            "clauses": [
+              "GDPR:Art32(1)(a)",
+              "NIS2:2022/2555:Art21(2)(h)"
+            ],
+            "severity": "high"
+          }
+        },
+        {
+          "ruleId": "CG006",
+          "ruleIndex": 5,
+          "level": "error",
+          "message": {
+            "text": "Database reachable directly from a person or the internet: \"Edits rejected orders\" connects Back-office clerk directly to a database. (Back-office clerk → Payments ledger) Clauses: NIS2:2024/2690:Annex-6.8, GDPR:Art25"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/payments-bad.mmd"
+                },
+                "region": {
+                  "startLine": 19
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "c4guardrails/v1": "06ab6486daf2a283e2e65cf2746ff5d3"
+          },
+          "properties": {
+            "clauses": [
+              "NIS2:2024/2690:Annex-6.8",
+              "GDPR:Art25"
+            ],
+            "severity": "high"
+          }
+        },
+        {
+          "ruleId": "CG005",
+          "ruleIndex": 4,
+          "level": "warning",
+          "message": {
+            "text": "Critical third-party ICT service without a declared exit or alternative: Tagged critical; no exit strategy or alternative declared. (Clearing ICT provider) Clauses: DORA:2022/2554:Art28(8), DORA:2022/2554:Art28, NIS2:2022/2555:Art21(2)(d)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/payments-bad.mmd"
+                },
+                "region": {
+                  "startLine": 15
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "c4guardrails/v1": "49f0dc251ca5521222ebf8f3807b021d"
+          },
+          "properties": {
+            "clauses": [
+              "DORA:2022/2554:Art28(8)",
+              "DORA:2022/2554:Art28",
+              "NIS2:2022/2555:Art21(2)(d)"
+            ],
+            "severity": "medium"
+          }
+        },
+        {
+          "ruleId": "CG007",
+          "ruleIndex": 6,
+          "level": "warning",
+          "message": {
+            "text": "No logging or monitoring component in a system handling personal data: 2 element(s) handle personal data; no element tagged logging. (whole diagram) Clauses: NIS2:2024/2690:Annex-3.2, DORA-RTS:2024/1774:Art12"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/payments-bad.mmd"
+                },
+                "region": {
+                  "startLine": 4
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "c4guardrails/v1": "5c1bf03885e777d3ee753183e4e39bbf"
+          },
+          "properties": {
+            "clauses": [
+              "NIS2:2024/2690:Annex-3.2",
+              "DORA-RTS:2024/1774:Art12"
+            ],
+            "severity": "medium"
+          }
+        },
+        {
+          "ruleId": "CG008",
+          "ruleIndex": 7,
+          "level": "warning",
+          "message": {
+            "text": "Credential-based connections without a secrets store: \"Posts entries\" authenticates with password; no element tagged secrets. (Payment engine → Payments ledger) Clauses: NIS2:2022/2555:Art21(2)(i), GDPR:Art32"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/payments-bad.mmd"
+                },
+                "region": {
+                  "startLine": 20
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "c4guardrails/v1": "8c00d02291527ae5d738df5fd4752c78"
+          },
+          "properties": {
+            "clauses": [
+              "NIS2:2022/2555:Art21(2)(i)",
+              "GDPR:Art32"
+            ],
+            "severity": "medium"
+          }
+        },
+        {
+          "ruleId": "CG010",
+          "ruleIndex": 9,
+          "level": "warning",
+          "message": {
+            "text": "Personal data sent to an external system with no declared processing region: \"Sends payment orders\" sends personal data to Clearing ICT provider; region not declared (missing fact). (Payment engine → Clearing ICT provider) Clauses: GDPR:Art44, GDPR:Art46"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/payments-bad.mmd"
+                },
+                "region": {
+                  "startLine": 21
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "c4guardrails/v1": "2ac9ecd3a3b6a4cd34a5813c6ce13470"
+          },
+          "properties": {
+            "clauses": [
+              "GDPR:Art44",
+              "GDPR:Art46"
+            ],
+            "severity": "medium"
+          }
+        },
+        {
+          "ruleId": "CG011",
+          "ruleIndex": 10,
+          "level": "note",
+          "message": {
+            "text": "Missing fact: \"Sends payment orders\" crosses a trust boundary; transport encryption not stated. (Payment engine → Clearing ICT provider) Clauses: no clause found"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/payments-bad.mmd"
+                },
+                "region": {
+                  "startLine": 21
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "c4guardrails/v1": "a76a4fc8ef4039c77380b4dad7a64214"
+          },
+          "properties": {
+            "clauses": [],
+            "severity": "info"
+          }
+        }
+      ]
+    }
+  ]
+}

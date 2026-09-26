@@ -1,0 +1,7 @@
+c4-guardrails 0.1.0
+
+examples/payments-good.mmd (Payments platform (good twin)): 10 elements, 9 relationships, 0 findings
+  no findings
+
+Summary: 0 critical · 0 high · 0 medium · 0 low · 0 info -> pass
+Assesses declared design facts only; not a compliance certification.

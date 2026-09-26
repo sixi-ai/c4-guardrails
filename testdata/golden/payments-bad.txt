@@ -1,0 +1,26 @@
+c4-guardrails 0.1.0
+
+examples/payments-bad.mmd (Payments platform (bad twin)): 6 elements, 5 relationships, 9 findings
+
+  SEVERITY  RULE   WHERE                              FINDING
+  HIGH      CG001  Back-office clerk → Payments led…  "Edits rejected orders" crosses a trust boundary: SQL declared without TLS.
+                                                      line 19 · GDPR:Art32(1)(a), NIS2:2022/2555:Art21(2)(h)
+  HIGH      CG002  Payment engine → Clearing ICT pr…  "Sends payment orders": no authentication declared (missing fact).
+                                                      line 21 · NIS2:2022/2555:Art21(2)(j), GDPR:Art32
+  HIGH      CG003  Payments ledger                    Holds personal data; encryption at rest is not declared (missing fact).
+                                                      line 11 · GDPR:Art32(1)(a), NIS2:2022/2555:Art21(2)(h)
+  HIGH      CG006  Back-office clerk → Payments led…  "Edits rejected orders" connects Back-office clerk directly to a database.
+                                                      line 19 · NIS2:2024/2690:Annex-6.8, GDPR:Art25
+  MEDIUM    CG005  Clearing ICT provider              Tagged critical; no exit strategy or alternative declared.
+                                                      line 15 · DORA:2022/2554:Art28(8), DORA:2022/2554:Art28, NIS2:2022/2555:Art21(2)(d)
+  MEDIUM    CG007  whole diagram                      2 element(s) handle personal data; no element tagged logging.
+                                                      line 4 · NIS2:2024/2690:Annex-3.2, DORA-RTS:2024/1774:Art12
+  MEDIUM    CG008  Payment engine → Payments ledger   "Posts entries" authenticates with password; no element tagged secrets.
+                                                      line 20 · NIS2:2022/2555:Art21(2)(i), GDPR:Art32
+  MEDIUM    CG010  Payment engine → Clearing ICT pr…  "Sends payment orders" sends personal data to Clearing ICT provider; region not declared (missing fact).
+                                                      line 21 · GDPR:Art44, GDPR:Art46
+  INFO      CG011  Payment engine → Clearing ICT pr…  "Sends payment orders" crosses a trust boundary; transport encryption not stated.
+                                                      line 21 · no clause found
+
+Summary: 0 critical · 4 high · 4 medium · 0 low · 1 info -> fail: 4 finding(s) at or above "high"
+Assesses declared design facts only; not a compliance certification.

@@ -1,0 +1,289 @@
+{
+  "tool": "c4-guardrails",
+  "version": "0.1.0",
+  "inputs": [
+    {
+      "source": "examples/rag-chatbot-bad.mmd",
+      "title": "RAG support chatbot (bad twin)",
+      "elements": 6,
+      "relationships": 5
+    }
+  ],
+  "fail_on": "high",
+  "summary": {
+    "critical": 0,
+    "high": 3,
+    "info": 0,
+    "low": 0,
+    "medium": 5
+  },
+  "findings": [
+    {
+      "rule_id": "CG001",
+      "severity": "high",
+      "title": "Plaintext transport across a trust boundary",
+      "message": "\"Chats with\" crosses a trust boundary: HTTP declared without TLS.",
+      "subject": "Customer → Chat widget",
+      "nodes": [
+        "customer",
+        "web"
+      ],
+      "edges": [
+        0
+      ],
+      "clauses": [
+        "GDPR:Art32(1)(a)",
+        "NIS2:2022/2555:Art21(2)(h)"
+      ],
+      "remediation": "Use TLS (HTTPS, JDBC/TLS, AMQPS, mTLS ...) and say so in the technology label, or add $tags=\"enc:tls\".",
+      "source": "examples/rag-chatbot-bad.mmd",
+      "line": 15
+    },
+    {
+      "rule_id": "CG003",
+      "severity": "high",
+      "title": "Personal-data store without declared encryption at rest",
+      "message": "Holds personal data; encryption at rest is not declared (missing fact).",
+      "subject": "Vector store",
+      "nodes": [
+        "vec"
+      ],
+      "clauses": [
+        "GDPR:Art32(1)(a)",
+        "NIS2:2022/2555:Art21(2)(h)"
+      ],
+      "remediation": "Declare it, e.g. $tags=\"pii;at_rest:aes256\" (or at_rest:cmk for customer-managed keys).",
+      "source": "examples/rag-chatbot-bad.mmd",
+      "line": 9
+    },
+    {
+      "rule_id": "CG004",
+      "severity": "high",
+      "title": "AI endpoint receives personal data without a human-oversight component",
+      "message": "\"Prompt with retrieved context\" sends personal data to an AI endpoint; no element tagged oversight.",
+      "subject": "Chat API → Hosted LLM API",
+      "nodes": [
+        "api",
+        "llm"
+      ],
+      "edges": [
+        4
+      ],
+      "clauses": [
+        "AIACT:2024/1689:Art14",
+        "GDPR:Art25"
+      ],
+      "remediation": "Add the oversight step to the design and tag it, e.g. Container(review, \"Human review\", ..., $tags=\"oversight\").",
+      "source": "examples/rag-chatbot-bad.mmd",
+      "line": 19
+    },
+    {
+      "rule_id": "CG005",
+      "severity": "medium",
+      "title": "Critical third-party ICT service without a declared exit or alternative",
+      "message": "Tagged critical; no exit strategy or alternative declared.",
+      "subject": "Hosted LLM API",
+      "nodes": [
+        "llm"
+      ],
+      "clauses": [
+        "DORA:2022/2554:Art28(8)",
+        "DORA:2022/2554:Art28",
+        "NIS2:2022/2555:Art21(2)(d)"
+      ],
+      "remediation": "Declare the exit path, e.g. $tags=\"critical;exit:secondary-provider\", and draw the alternative if it exists.",
+      "source": "examples/rag-chatbot-bad.mmd",
+      "line": 13
+    },
+    {
+      "rule_id": "CG007",
+      "severity": "medium",
+      "title": "No logging or monitoring component in a system handling personal data",
+      "message": "3 element(s) handle personal data; no element tagged logging.",
+      "subject": "whole diagram",
+      "nodes": [
+        "api",
+        "vec",
+        "crm"
+      ],
+      "clauses": [
+        "NIS2:2024/2690:Annex-3.2",
+        "DORA-RTS:2024/1774:Art12"
+      ],
+      "remediation": "Add the log sink to the diagram and tag it, e.g. Container(logs, \"Central logging\", \"OpenTelemetry\", $tags=\"logging\").",
+      "source": "examples/rag-chatbot-bad.mmd",
+      "line": 4
+    },
+    {
+      "rule_id": "CG008",
+      "severity": "medium",
+      "title": "Credential-based connections without a secrets store",
+      "message": "\"Similarity search\" authenticates with password; no element tagged secrets.",
+      "subject": "Chat API → Vector store",
+      "nodes": [
+        "api",
+        "vec"
+      ],
+      "edges": [
+        2
+      ],
+      "clauses": [
+        "NIS2:2022/2555:Art21(2)(i)",
+        "GDPR:Art32"
+      ],
+      "remediation": "Add a secrets store (Key Vault, Vault, KMS) tagged secrets, or switch to workload identity (auth:managed_identity, auth:mtls).",
+      "source": "examples/rag-chatbot-bad.mmd",
+      "line": 17
+    },
+    {
+      "rule_id": "CG008",
+      "severity": "medium",
+      "title": "Credential-based connections without a secrets store",
+      "message": "\"Prompt with retrieved context\" authenticates with api_key; no element tagged secrets.",
+      "subject": "Chat API → Hosted LLM API",
+      "nodes": [
+        "api",
+        "llm"
+      ],
+      "edges": [
+        4
+      ],
+      "clauses": [
+        "NIS2:2022/2555:Art21(2)(i)",
+        "GDPR:Art32"
+      ],
+      "remediation": "Add a secrets store (Key Vault, Vault, KMS) tagged secrets, or switch to workload identity (auth:managed_identity, auth:mtls).",
+      "source": "examples/rag-chatbot-bad.mmd",
+      "line": 19
+    },
+    {
+      "rule_id": "CG010",
+      "severity": "medium",
+      "title": "Personal data sent to an external system with no declared processing region",
+      "message": "\"Prompt with retrieved context\" sends personal data to Hosted LLM API; region not declared (missing fact).",
+      "subject": "Chat API → Hosted LLM API",
+      "nodes": [
+        "api",
+        "llm"
+      ],
+      "edges": [
+        4
+      ],
+      "clauses": [
+        "GDPR:Art44",
+        "GDPR:Art46"
+      ],
+      "remediation": "Declare the location on the external system, e.g. $tags=\"region:eu-west\", and record the transfer safeguard if it is outside the EU/EEA.",
+      "source": "examples/rag-chatbot-bad.mmd",
+      "line": 19
+    }
+  ],
+  "clauses": {
+    "AIACT:2024/1689:Art14": {
+      "id": "AIACT:2024/1689:Art14",
+      "instrument": "Regulation (EU) 2024/1689 (AI Act)",
+      "ref": "Art. 14",
+      "title": "Human oversight",
+      "summary": "High-risk AI systems have to be designed so that people can oversee them effectively while in use, proportionate to risk, autonomy and context. For other AI systems this is a widely used design practice.",
+      "source_url": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj"
+    },
+    "DORA-RTS:2024/1774:Art12": {
+      "id": "DORA-RTS:2024/1774:Art12",
+      "instrument": "Commission Delegated Regulation (EU) 2024/1774 (DORA RTS on ICT risk management)",
+      "ref": "Art. 12",
+      "title": "Logging",
+      "summary": "Financial entities define and run logging procedures and tools: which events are logged, how long logs are kept and how log data is protected.",
+      "source_url": "https://eur-lex.europa.eu/eli/reg_del/2024/1774/oj"
+    },
+    "DORA:2022/2554:Art28": {
+      "id": "DORA:2022/2554:Art28",
+      "instrument": "Regulation (EU) 2022/2554 (DORA)",
+      "ref": "Art. 28",
+      "title": "General principles for the management of ICT third-party risk",
+      "summary": "Financial entities stay responsible when they rely on ICT third-party providers and manage that risk inside their ICT risk management framework, including concentration risk.",
+      "source_url": "https://eur-lex.europa.eu/eli/reg/2022/2554/oj"
+    },
+    "DORA:2022/2554:Art28(8)": {
+      "id": "DORA:2022/2554:Art28(8)",
+      "instrument": "Regulation (EU) 2022/2554 (DORA)",
+      "ref": "Art. 28(8)",
+      "title": "General principles for the management of ICT third-party risk (exit strategies)",
+      "summary": "For ICT services that support critical or important functions, financial entities need exit strategies that let them leave a provider without disrupting the business.",
+      "source_url": "https://eur-lex.europa.eu/eli/reg/2022/2554/oj"
+    },
+    "GDPR:Art25": {
+      "id": "GDPR:Art25",
+      "instrument": "Regulation (EU) 2016/679 (GDPR)",
+      "ref": "Art. 25",
+      "title": "Data protection by design and by default",
+      "summary": "Controllers build appropriate technical and organisational measures into the design of processing and, by default, process only the personal data each purpose needs.",
+      "source_url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
+    },
+    "GDPR:Art32": {
+      "id": "GDPR:Art32",
+      "instrument": "Regulation (EU) 2016/679 (GDPR)",
+      "ref": "Art. 32",
+      "title": "Security of processing",
+      "summary": "Controllers and processors apply security measures appropriate to the risk, such as encryption, resilience, recovery and regular testing.",
+      "source_url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
+    },
+    "GDPR:Art32(1)(a)": {
+      "id": "GDPR:Art32(1)(a)",
+      "instrument": "Regulation (EU) 2016/679 (GDPR)",
+      "ref": "Art. 32(1)(a)",
+      "title": "Security of processing (pseudonymisation and encryption)",
+      "summary": "Pseudonymisation and encryption of personal data are named as examples of appropriate security measures.",
+      "source_url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
+    },
+    "GDPR:Art44": {
+      "id": "GDPR:Art44",
+      "instrument": "Regulation (EU) 2016/679 (GDPR)",
+      "ref": "Art. 44",
+      "title": "General principle for transfers",
+      "summary": "Personal data leaves the EU/EEA only under the conditions of GDPR Chapter V, so knowing where a recipient processes data matters.",
+      "source_url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
+    },
+    "GDPR:Art46": {
+      "id": "GDPR:Art46",
+      "instrument": "Regulation (EU) 2016/679 (GDPR)",
+      "ref": "Art. 46",
+      "title": "Transfers subject to appropriate safeguards",
+      "summary": "Without an adequacy decision, a transfer to a third country needs appropriate safeguards such as standard data protection clauses.",
+      "source_url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
+    },
+    "NIS2:2022/2555:Art21(2)(d)": {
+      "id": "NIS2:2022/2555:Art21(2)(d)",
+      "instrument": "Directive (EU) 2022/2555 (NIS2)",
+      "ref": "Art. 21(2)(d)",
+      "title": "Cybersecurity risk-management measures (supply chain security)",
+      "summary": "Risk-management measures cover supply chain security, including the relationship with direct suppliers and service providers.",
+      "source_url": "https://eur-lex.europa.eu/eli/dir/2022/2555/oj"
+    },
+    "NIS2:2022/2555:Art21(2)(h)": {
+      "id": "NIS2:2022/2555:Art21(2)(h)",
+      "instrument": "Directive (EU) 2022/2555 (NIS2)",
+      "ref": "Art. 21(2)(h)",
+      "title": "Cybersecurity risk-management measures (cryptography and encryption)",
+      "summary": "Risk-management measures include policies on the use of cryptography and, where appropriate, encryption.",
+      "source_url": "https://eur-lex.europa.eu/eli/dir/2022/2555/oj"
+    },
+    "NIS2:2022/2555:Art21(2)(i)": {
+      "id": "NIS2:2022/2555:Art21(2)(i)",
+      "instrument": "Directive (EU) 2022/2555 (NIS2)",
+      "ref": "Art. 21(2)(i)",
+      "title": "Cybersecurity risk-management measures (access control and asset management)",
+      "summary": "Risk-management measures include access control policies and asset management, which covers how credentials are held.",
+      "source_url": "https://eur-lex.europa.eu/eli/dir/2022/2555/oj"
+    },
+    "NIS2:2024/2690:Annex-3.2": {
+      "id": "NIS2:2024/2690:Annex-3.2",
+      "instrument": "Commission Implementing Regulation (EU) 2024/2690",
+      "ref": "Annex, point 3.2",
+      "title": "Monitoring and logging",
+      "summary": "In-scope entities monitor and log activity on their network and information systems, decide what is logged, review logs and keep them for a defined period.",
+      "source_url": "https://eur-lex.europa.eu/eli/reg_impl/2024/2690/oj"
+    }
+  },
+  "clause_attribution": "© European Union, https://eur-lex.europa.eu (Commission Decision 2011/833/EU)",
+  "disclaimer": "c4-guardrails assesses what a design-time diagram declares against deterministic rules. It evidences gaps and proposes fixes; it is not a compliance certification and not legal advice."
+}

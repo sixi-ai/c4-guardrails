@@ -1,0 +1,16 @@
+c4-guardrails 0.1.0
+
+examples/credit-scoring.c4.json (Credit scoring service (JSON input example)): 7 elements, 6 relationships, 4 findings
+
+  SEVERITY  RULE   WHERE                              FINDING
+  HIGH      CG002  Credit scoring model → Credit bu…  "Fetches credit history": authentication declared as "none".
+                                                      line 19 · NIS2:2022/2555:Art21(2)(j), GDPR:Art32
+  HIGH      CG009  Credit scoring model               Tagged ai + high-risk; no relationship to an element tagged records.
+                                                      line 9 · AIACT:2024/1689:Art12, AIACT:2024/1689:Art26(6)
+  MEDIUM    CG005  Credit bureau                      Tagged critical; no exit strategy or alternative declared.
+                                                      line 13 · DORA:2022/2554:Art28(8), DORA:2022/2554:Art28, NIS2:2022/2555:Art21(2)(d)
+  MEDIUM    CG007  whole diagram                      2 element(s) handle personal data; no element tagged logging.
+                                                      line 7 · NIS2:2024/2690:Annex-3.2, DORA-RTS:2024/1774:Art12
+
+Summary: 0 critical · 2 high · 2 medium · 0 low · 0 info -> fail: 2 finding(s) at or above "high"
+Assesses declared design facts only; not a compliance certification.
