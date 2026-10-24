@@ -177,7 +177,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) (DCO sign-off) and [SECURITY.md](SECURITY
 
 ## About
 
-I'm Radosław Brus. This PoC is a small, open slice of ideas from Sixi Assure, a design-time architecture &
+I'm Radoslaw B. This PoC is a small, open slice of ideas from Sixi Assure, a design-time architecture &
 compliance assurance tool I'm building. Launching soon.
 
 ## Licence
